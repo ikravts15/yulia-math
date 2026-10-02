@@ -497,3 +497,25 @@ body::before { content: ""; position: fixed; inset: 0; background: var(--bg); z-
   .contact-list a { padding: 18px 4px; }
 }
 #contacts, section[id] { scroll-margin-top: 90px; }
+
+/* контакты: значки мессенджеров */
+.contact-list a { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 16px; }
+.c-icon {
+  width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center;
+  color: #fff; background: var(--forest); flex: none; transition: transform .25s;
+}
+.c-icon svg { width: 24px; height: 24px; }
+.contact-list a:hover .c-icon { transform: rotate(-6deg) scale(1.06); }
+.c-tg .c-icon { background: #2aabee; }
+.c-wa .c-icon { background: #25d366; }
+.c-max .c-icon { background: linear-gradient(135deg, #4f8cff, #8a4dff); }
+.c-ph .c-icon { background: var(--forest); }
+.c-ml .c-icon { background: var(--coral); }
+.c-value { font-size: clamp(16px, 2vw, 22px); }
+.c-ml .c-value { font-size: clamp(14px, 1.6vw, 18px); }
+@media (max-width: 640px) {
+  .contact-list a { gap: 12px; }
+  .c-icon { width: 40px; height: 40px; border-radius: 12px; }
+  .c-icon svg { width: 21px; height: 21px; }
+  .c-label { font-size: 10px; letter-spacing: .1em; }
+}

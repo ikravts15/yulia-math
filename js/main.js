@@ -3,15 +3,15 @@
    ========================================================= */
 const CONFIG = {
   // Куда приходят заявки с формы (сервис formsubmit.co, бесплатно, без регистрации)
-  leadEmail: "",                                     // ← e-mail Юлии
+  leadEmail: "yuliya.shiryaeva0098@yandex.ru",                                     // ← e-mail Юлии
   // Контакты в разделе «Контакты» (пустое значение = строка скрыта)
-  telegram: "",                                      // ← ник без @, например yulia_math
-  max: "",                                           // ← ссылка на профиль в Max
-  phone: "",                                         // ← телефон, например +7 (900) 000-00-00
-  whatsapp: false,                                   // ← true, если на этом номере есть WhatsApp
-  email: "",                                         // ← e-mail для показа на сайте
+  telegram: "shiryaevarepetitor",                                      // ← ник без @, например yulia_math
+  max: "https://max.ru/u/f9LHodD0cOJq1lu0y_l-4WV6zj0PprbP35JF2F6w1ngS1Z5LdkeB3kf3S2Y",                                           // ← ссылка на профиль в Max
+  phone: "+7 (930) 751-75-07",                                         // ← телефон, например +7 (900) 000-00-00
+  whatsapp: true,                                   // ← true, если на этом номере есть WhatsApp
+  email: "yuliya.shiryaeva0098@yandex.ru",                                         // ← e-mail для показа на сайте
   reviews: "https://t.me/shiryaevarepetitorotzv",   // канал с отзывами
-  metrika: 0,                                        // ← номер счётчика Яндекс.Метрики (0 = выключено)
+  metrika: 113329618,                                        // ← номер счётчика Яндекс.Метрики (0 = выключено)
 };
 
 /* ---------- Яндекс.Метрика ---------- */
@@ -114,6 +114,7 @@ $("#year").textContent = new Date().getFullYear();
     if (!c) { li.hidden = true; return; }
     const a = li.querySelector("a");
     a.href = c.href; li.querySelector(".c-value").textContent = c.text;
+    if (/^https?:/.test(c.href)) { a.target = "_blank"; a.rel = "noopener"; }
     a.addEventListener("click", () => goal("contact_click", { type: li.dataset.contact }));
   });
   if (!$$("#contactList li").some(li => !li.hidden)) $("#contactList").hidden = true;
@@ -220,7 +221,8 @@ function countUp(el) {
 const nav = $("#nav"), sticky = $(".sticky-cta");
 addEventListener("scroll", () => {
   nav.classList.toggle("scrolled", scrollY > 20);
-  const nearEnd = innerHeight + scrollY > document.body.scrollHeight - 500;
+  const c = document.getElementById("contacts");
+  const nearEnd = (c && c.getBoundingClientRect().top < innerHeight) || innerHeight + scrollY > document.body.scrollHeight - 500;
   sticky.classList.toggle("show", scrollY > innerHeight * .8 && !nearEnd);
 }, { passive: true });
 
