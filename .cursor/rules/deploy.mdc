@@ -4,5 +4,6 @@ alwaysApply: true
 ---
 Это сайт на GitHub Pages (ветка main). После ЛЮБОГО изменения файлов автоматически выполни:
 git add -A && git commit -m "<что изменено, по-русски>" && git push origin main
+Если менялись css/style.css или js/main.js — перед коммитом обнови в index.html параметр ?v=... у этих файлов на новое значение.
 Если push отклонён — git pull --rebase origin main и повтори push.
 Подробности о проекте — в AGENTS.md.
