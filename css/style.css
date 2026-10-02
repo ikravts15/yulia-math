@@ -528,3 +528,15 @@ body::before { content: ""; position: fixed; inset: 0; background: var(--bg); z-
 .fb-max { background: linear-gradient(135deg, #4f8cff, #8a4dff); } .fb-ph { background: var(--forest); }
 .faq-tg { justify-self: end; max-width: 420px; margin-top: 22px; rotate: 2deg; }
 @media (max-width: 640px) { .faq-tg { justify-self: center; rotate: 1deg; } }
+/* три отзыва в блоке цен */
+.price-tgs { max-width: 1100px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 22px; align-items: start; }
+.price-tgs .tg { max-width: none; margin-top: 0; }
+.price-tgs .tg:nth-child(1) { rotate: -3deg; }
+.price-tgs .tg:nth-child(2) { rotate: 1.5deg; margin-top: 34px; }
+.price-tgs .tg:nth-child(3) { rotate: -1.5deg; margin-top: 8px; }
+@media (max-width: 900px) {
+  .price-tgs { grid-template-columns: 1fr; max-width: 460px; }
+  .price-tgs .tg:nth-child(n) { margin-top: 0; }
+}
+.price-tgs { max-width: 980px; }
+@media (max-width: 900px) { .price-tgs { gap: 28px; } }
