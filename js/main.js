@@ -3,7 +3,7 @@
    ========================================================= */
 const CONFIG = {
   // Куда приходят заявки с формы (сервис formsubmit.co, бесплатно, без регистрации)
-  leadEmail: "yuliya.shiryaeva0098@yandex.ru",                                     // ← e-mail Юлии
+  leadEmail: "yuliya.shiryaeva0098@yandex.ru",
   // Контакты в разделе «Контакты» (пустое значение = строка скрыта)
   telegram: "shiryaevarepetitor",                                      // ← ник без @, например yulia_math
   max: "https://max.ru/u/f9LHodD0cOJq1lu0y_l-4WV6zj0PprbP35JF2F6w1ngS1Z5LdkeB3kf3S2Y",                                           // ← ссылка на профиль в Max
@@ -126,10 +126,26 @@ $("#year").textContent = new Date().getFullYear();
   let started = false;
   form.addEventListener("input", () => { if (!started) { started = true; goal("form_start"); } });
   const showError = t => { err.textContent = t; err.hidden = false; };
+  const showFallback = d => {
+    const text = `Здравствуйте, Юлия! Заявка с сайта yulia-math.ru\nИмя: ${d["Имя"]}\nКонтакт: ${d["Контакт"]}\nФормат: ${d["Формат"]}\nСообщение: ${d["Сообщение"]}`;
+    const digits = CONFIG.phone.replace(/\D/g, "").replace(/^8/, "7");
+    const set = (id, href, ok) => { const a = $(id); a.hidden = !ok; if (ok) a.href = href; return a; };
+    const tg = set("#fbTelegram", "https://t.me/" + CONFIG.telegram.replace(/^@/, ""), !!CONFIG.telegram);
+    const wa = set("#fbWhatsapp", "https://wa.me/" + digits + "?text=" + encodeURIComponent(text), !!(CONFIG.phone && CONFIG.whatsapp));
+    const mx = set("#fbMax", CONFIG.max, !!CONFIG.max);
+    const ph = set("#fbPhone", "tel:+" + digits, !!CONFIG.phone);
+    // для Telegram и Max текст заранее копируем — останется вставить
+    [tg, mx].forEach(a => a.onclick = () => {
+      try { navigator.clipboard.writeText(text).then(() => toast("Текст заявки скопирован — вставьте его в чат")); } catch (e) {}
+    });
+    [tg, wa, mx, ph].forEach(a => a.addEventListener("click", () => goal("lead_fallback", { via: a.id.replace("fb", "").toLowerCase() }), { once: true }));
+    $("#leadFallback").hidden = false;
+  };
+
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
-    err.hidden = true;
+    err.hidden = true; $("#leadFallback").hidden = true;
     const name = $("#leadName").value.trim(), contact = $("#leadContact").value.trim();
     if (!name) { showError("Пожалуйста, укажите имя."); $("#leadName").focus(); return; }
     if (contact.replace(/\W/g, "").length < 5) { showError("Укажите телефон или ник в Telegram, чтобы я могла связаться."); $("#leadContact").focus(); return; }
@@ -161,7 +177,9 @@ $("#year").textContent = new Date().getFullYear();
       form.hidden = true; $("#leadSuccess").hidden = false;
       confetti();
     } catch (ex) {
-      showError("Не получилось отправить заявку. Попробуйте ещё раз или напишите напрямую — контакты рядом с формой.");
+      showError("Не получилось отправить заявку через сайт 😔 Выберите, куда написать Юлии — текст заявки уже подготовлен:");
+      showFallback(data);
+      goal("lead_fallback_shown");
     } finally {
       btn.disabled = false; btn.textContent = "Отправить заявку";
     }

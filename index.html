@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <script>document.documentElement.classList.add("js")</script>
-  <link rel="stylesheet" href="css/style.css?v=20261002-5" />
+  <link rel="stylesheet" href="css/style.css?v=20261002-9" />
 </head>
 <body>
 
@@ -320,6 +320,10 @@
       <details class="reveal"><summary>Можно ли совмещать со школой?</summary><p>Да, занятия проходят с понедельника по воскресенье, есть разное время и формат.</p></details>
       <details class="reveal"><summary>А если пропустим урок?</summary><p>Индивидуальное занятие — договоримся о дне и времени отработки в свободных «окнах» расписания. Пропуск в группе — ученик смотрит урок в записи, выполняет и сдаёт ДЗ, а непонятное разбираем в созвоне на 15–20 минут.</p></details>
       <details class="reveal"><summary>Сколько времени нужно для прогресса?</summary><p>Обычно 2–3 месяца для заметных результатов при регулярных занятиях и выполнении всех домашних заданий. У каждого свой темп, и важно не сдаваться в переломный момент. Все, кто действительно работает и выполняет рекомендации, получают желаемый результат!</p></details>
+      <figure class="tg faq-tg reveal">
+        <figcaption>Переслано от: vlerx</figcaption>
+        <p>В некоторых темах, таких как логарифмы, вообще не понимала… Я сдала на пятёрку! Спасибо тебе огромное 🙏</p>
+      </figure>
     </div>
   </section>
 
@@ -341,10 +345,6 @@
           <li data-contact="email"><a href="#" class="c-ml"><span class="c-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 4H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2Zm0 4-8 5-8-5V6l8 5 8-5v2Z"/></svg></span><span class="c-value">—</span><span class="c-label">Написать</span></a></li>
         </ul>
         <p class="contacts-note">Занятия онлайн в Zoom, с понедельника по воскресенье. Расскажите, в каком классе ребёнок и к чему готовимся — подберу формат и время.</p>
-        <figure class="tg final-tg">
-          <figcaption>Переслано от: vlerx</figcaption>
-          <p>В некоторых темах, таких как логарифмы, вообще не понимала… Я сдала на пятёрку! Спасибо тебе огромное 🙏</p>
-        </figure>
       </div>
 
       <div class="lead-card reveal">
@@ -374,6 +374,12 @@
 
           <button type="submit" class="btn btn-primary btn-lg w-full" id="leadSubmit">Отправить заявку</button>
           <p class="form-hint" id="leadError" role="alert" hidden></p>
+          <div class="lead-fallback" id="leadFallback" hidden>
+            <a class="btn fb-btn fb-tg" id="fbTelegram" target="_blank" rel="noopener">Telegram</a>
+            <a class="btn fb-btn fb-wa" id="fbWhatsapp" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn fb-btn fb-max" id="fbMax" target="_blank" rel="noopener">Max</a>
+            <a class="btn fb-btn fb-ph" id="fbPhone">Позвонить</a>
+          </div>
           <p class="tiny muted">Нажимая кнопку, вы соглашаетесь на обработку персональных данных для связи с вами.</p>
         </form>
 
@@ -397,6 +403,6 @@
   <div class="toast" id="toast"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
-  <script src="js/main.js?v=20261002-5"></script>
+  <script src="js/main.js?v=20261002-9"></script>
 </body>
 </html>

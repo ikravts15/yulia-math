@@ -519,3 +519,12 @@ body::before { content: ""; position: fixed; inset: 0; background: var(--bg); z-
   .c-icon svg { width: 21px; height: 21px; }
   .c-label { font-size: 10px; letter-spacing: .1em; }
 }
+.lead-fallback { display: grid; gap: 10px; margin-top: 14px; }
+.lead-fallback .btn { margin-top: 0; width: 100%; }
+[hidden] { display: none !important; }
+.lead-fallback { grid-template-columns: 1fr 1fr; }
+.fb-btn { color: #fff; border: 0; font-size: 15px; padding: 13px 16px; }
+.fb-tg { background: #2aabee; } .fb-wa { background: #25d366; }
+.fb-max { background: linear-gradient(135deg, #4f8cff, #8a4dff); } .fb-ph { background: var(--forest); }
+.faq-tg { justify-self: end; max-width: 420px; margin-top: 22px; rotate: 2deg; }
+@media (max-width: 640px) { .faq-tg { justify-self: center; rotate: 1deg; } }
