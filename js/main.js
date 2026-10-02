@@ -2,9 +2,34 @@
    НАСТРОЙКИ
    ========================================================= */
 const CONFIG = {
-  bot: "https://t.me/Pomoshnik_Po_DZ_bot",          // бот для записи ученика
+  // Куда приходят заявки с формы (сервис formsubmit.co, бесплатно, без регистрации)
+  leadEmail: "",                                     // ← e-mail Юлии
+  // Контакты в разделе «Контакты» (пустое значение = строка скрыта)
+  telegram: "",                                      // ← ник без @, например yulia_math
+  max: "",                                           // ← ссылка на профиль в Max
+  phone: "",                                         // ← телефон, например +7 (900) 000-00-00
+  whatsapp: false,                                   // ← true, если на этом номере есть WhatsApp
+  email: "",                                         // ← e-mail для показа на сайте
   reviews: "https://t.me/shiryaevarepetitorotzv",   // канал с отзывами
+  metrika: 0,                                        // ← номер счётчика Яндекс.Метрики (0 = выключено)
 };
+
+/* ---------- Яндекс.Метрика ---------- */
+(function (id) {
+  if (!id) return;
+  (function (m, e, t, r, i, k, a) {
+    m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+    m[i].l = 1 * new Date();
+    k = e.createElement(t); a = e.getElementsByTagName(t)[0];
+    k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
+  })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+  ym(id, "init", { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true });
+})(CONFIG.metrika);
+
+// Цели: cta_click, form_start, lead, contact_click, reviews_click, quiz_start, quiz_finish, share_result, challenge, ref_share, ref_copy
+function goal(name, params) {
+  try { if (CONFIG.metrika && window.ym) ym(CONFIG.metrika, "reachGoal", name, params); } catch (e) {}
+}
 
 /* Отзывы для «стены» — настоящие сообщения из Telegram */
 const REVIEWS = [
@@ -50,16 +75,97 @@ async function copy(text) {
   catch { prompt("Скопируйте ссылку:", text); }
 }
 
-/* ---------- ссылки: бот (с меткой источника) и канал ---------- */
-// ?start=... приходит боту — видно, откуда пришёл ученик (hero, quiz_5, ref и т.д.)
-const botLink = start => CONFIG.bot + (start ? "?start=" + encodeURIComponent(start).slice(0, 64) : "");
-const fromRef = new URLSearchParams(location.search).has("ref");
-$$(".js-bot").forEach(a => {
-  a.href = botLink((fromRef ? "ref_" : "site_") + (a.dataset.start || "btn"));
-  a.target = "_blank"; a.rel = "noopener";
+/* ---------- кнопки записи → раздел «Контакты» ---------- */
+const params0 = new URLSearchParams(location.search);
+const leadSource = params0.has("ref") ? "реферальная ссылка" : params0.has("challenge") ? "вызов от друга" : "сайт";
+let lastQuizScore = null;
+function goToForm({ format, message } = {}) {
+  if (format) $("#leadFormat").value = format;
+  if (message && !$("#leadMessage").value) $("#leadMessage").value = message;
+  $("#contacts").scrollIntoView({ behavior: "smooth" });
+  setTimeout(() => { try { $("#leadName").focus({ preventScroll: true }); } catch (e) {} }, 700);
+}
+$$(".js-cta").forEach(a => {
+  a.addEventListener("click", e => {
+    e.preventDefault();
+    goal("cta_click", { from: a.dataset.start || "btn" });
+    goToForm({
+      format: a.dataset.format,
+      message: a.id === "quizCta" && lastQuizScore !== null ? `Прошёл(ла) тест на сайте: ${lastQuizScore} из 8. Хочу разобрать ошибки.` : "",
+    });
+  });
 });
-$$(".js-reviews").forEach(a => { a.href = CONFIG.reviews; a.target = "_blank"; a.rel = "noopener"; });
+
+$$(".js-reviews").forEach(a => { a.addEventListener("click", () => goal("reviews_click")); a.href = CONFIG.reviews; a.target = "_blank"; a.rel = "noopener"; });
 $("#year").textContent = new Date().getFullYear();
+
+/* ---------- контакты ---------- */
+(() => {
+  const digits = CONFIG.phone.replace(/\D/g, "").replace(/^8/, "7");
+  const map = {
+    telegram: CONFIG.telegram && { href: "https://t.me/" + CONFIG.telegram.replace(/^@/, ""), text: "@" + CONFIG.telegram.replace(/^@/, "") },
+    max: CONFIG.max && { href: CONFIG.max, text: "Max" },
+    phone: CONFIG.phone && { href: "tel:+" + digits, text: CONFIG.phone },
+    whatsapp: CONFIG.phone && CONFIG.whatsapp && { href: "https://wa.me/" + digits, text: "WhatsApp" },
+    email: CONFIG.email && { href: "mailto:" + CONFIG.email, text: CONFIG.email },
+  };
+  $$("#contactList li").forEach(li => {
+    const c = map[li.dataset.contact];
+    if (!c) { li.hidden = true; return; }
+    const a = li.querySelector("a");
+    a.href = c.href; li.querySelector(".c-value").textContent = c.text;
+    a.addEventListener("click", () => goal("contact_click", { type: li.dataset.contact }));
+  });
+  if (!$$("#contactList li").some(li => !li.hidden)) $("#contactList").hidden = true;
+})();
+
+/* ---------- форма заявки ---------- */
+(() => {
+  const form = $("#leadForm"), btn = $("#leadSubmit"), err = $("#leadError");
+  let started = false;
+  form.addEventListener("input", () => { if (!started) { started = true; goal("form_start"); } });
+  const showError = t => { err.textContent = t; err.hidden = false; };
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    err.hidden = true;
+    const name = $("#leadName").value.trim(), contact = $("#leadContact").value.trim();
+    if (!name) { showError("Пожалуйста, укажите имя."); $("#leadName").focus(); return; }
+    if (contact.replace(/\W/g, "").length < 5) { showError("Укажите телефон или ник в Telegram, чтобы я могла связаться."); $("#leadContact").focus(); return; }
+    if (form._honey.value) return; // бот-спамер
+
+    const data = {
+      "Имя": name,
+      "Контакт": contact,
+      "Формат": $("#leadFormat").value,
+      "Сообщение": $("#leadMessage").value.trim() || "—",
+      "Результат теста": lastQuizScore !== null ? lastQuizScore + " из 8" : "не проходил(а)",
+      "Источник": leadSource,
+      _subject: "Новая заявка с сайта yulia-math.ru — " + name,
+      _template: "table",
+      _captcha: "false",
+    };
+
+    if (!CONFIG.leadEmail) { showError("Форма ещё не подключена. Напишите, пожалуйста, напрямую — контакты рядом с формой."); return; }
+    btn.disabled = true; btn.textContent = "Отправляем…";
+    try {
+      const r = await fetch("https://formsubmit.co/ajax/" + CONFIG.leadEmail, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(data),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok || String(j.success) === "false") throw new Error(j.message || r.status);
+      goal("lead", { format: data["Формат"] });
+      form.hidden = true; $("#leadSuccess").hidden = false;
+      confetti();
+    } catch (ex) {
+      showError("Не получилось отправить заявку. Попробуйте ещё раз или напишите напрямую — контакты рядом с формой.");
+    } finally {
+      btn.disabled = false; btn.textContent = "Отправить заявку";
+    }
+  });
+})();
 
 /* ---------- стена отзывов ---------- */
 (() => {
@@ -131,8 +237,8 @@ $$(".tilt").forEach(card => {
 /* ---------- реферальная программа ---------- */
 const refUrl = siteUrl() + "?ref=friend";
 const refText = "Смотри, классный репетитор по математике 🧠 Первое занятие бесплатно, а по моей ссылке — скидка на первый абонемент:";
-$("#refShare").addEventListener("click", () => share({ title: "Репетитор по математике", text: refText, url: refUrl }));
-$("#refCopy").addEventListener("click", () => copy(refUrl));
+$("#refShare").addEventListener("click", () => goal("ref_share") || share({ title: "Репетитор по математике", text: refText, url: refUrl }));
+$("#refCopy").addEventListener("click", () => { goal("ref_copy"); copy(refUrl); });
 
 /* =========================================================
    КВИЗ «Проверь математику за 60 секунд»
@@ -174,6 +280,7 @@ const best = store.get("quizBest", null);
 if (best !== null) $("#playedCounter").textContent = `Твой рекорд: ${best} из 8. Побьёшь?`;
 
 function startQuiz() {
+  goal("quiz_start");
   order = QUESTIONS.map(q => {
     const opts = shuffle(q.a.map((t, i) => ({ t, ok: i === q.c })));
     return { q: q.q, opts };
@@ -222,6 +329,7 @@ function answer(btn, ok) {
 }
 
 function finish() {
+  goal("quiz_finish", { score });
   clearInterval(timerId);
   $("#qProgress").style.width = "100%";
   const r = RESULTS.find(r => score >= r.min);
@@ -232,7 +340,7 @@ function finish() {
     text = (score > c ? "Ты победил(а) друга! 🎉 " : score === c ? "Ничья! 🤝 " : "Друг пока впереди 😅 ") + text;
   }
   $("#rText").textContent = text;
-  $("#quizBotCta").href = botLink("quiz_" + score);
+  lastQuizScore = score;
   show("result");
   animateScore(score);
   const prev = store.get("quizBest", -1);
@@ -248,12 +356,13 @@ function animateScore(n) {
 $("#quizStart").addEventListener("click", startQuiz);
 $("#quizRetry").addEventListener("click", startQuiz);
 
-$("#shareBtn").addEventListener("click", () => share({
+$("#shareBtn").addEventListener("click", () => goal("share_result") || share({
   title: "Мой результат",
   text: `Я решил(а) ${score} из 8 задач по математике за 60 секунд 🧠 А ты сможешь?`,
   url: siteUrl() + "?challenge=" + score + "#quiz",
 }));
 $("#challengeBtn").addEventListener("click", () => {
+  goal("challenge");
   const url = siteUrl() + "?challenge=" + score + "#quiz";
   share({ title: "Вызов!", text: `⚔️ Вызываю тебя на дуэль! У меня ${score}/8 по математике за минуту. Побьёшь?`, url });
 });

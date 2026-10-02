@@ -1,0 +1,8 @@
+---
+description: Публикация сайта yulia-math.ru
+alwaysApply: true
+---
+Это сайт на GitHub Pages (ветка main). После ЛЮБОГО изменения файлов автоматически выполни:
+git add -A && git commit -m "<что изменено, по-русски>" && git push origin main
+Если push отклонён — git pull --rebase origin main и повтори push.
+Подробности о проекте — в AGENTS.md.
