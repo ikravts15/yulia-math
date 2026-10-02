@@ -103,11 +103,11 @@ $("#year").textContent = new Date().getFullYear();
 (() => {
   const digits = CONFIG.phone.replace(/\D/g, "").replace(/^8/, "7");
   const map = {
-    telegram: CONFIG.telegram && { href: "https://t.me/" + CONFIG.telegram.replace(/^@/, ""), text: "@" + CONFIG.telegram.replace(/^@/, "") },
+    telegram: CONFIG.telegram && { href: "https://t.me/" + CONFIG.telegram.replace(/^@/, ""), text: "Telegram" },
     max: CONFIG.max && { href: CONFIG.max, text: "Max" },
     phone: CONFIG.phone && { href: "tel:+" + digits, text: CONFIG.phone },
     whatsapp: CONFIG.phone && CONFIG.whatsapp && { href: "https://wa.me/" + digits, text: "WhatsApp" },
-    email: CONFIG.email && { href: "mailto:" + CONFIG.email, text: CONFIG.email },
+    email: CONFIG.email && { href: "mailto:" + CONFIG.email + "?subject=" + encodeURIComponent("Занятия по математике"), text: "E-mail" },
   };
   $$("#contactList li").forEach(li => {
     const c = map[li.dataset.contact];
