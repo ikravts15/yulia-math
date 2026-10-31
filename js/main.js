@@ -282,6 +282,7 @@ const RESULTS = [
 
 const TOTAL_TIME = 60;
 let order = [], qi = 0, score = 0, timeLeft = TOTAL_TIME, timerId = null, locked = false;
+let answerTimeout = null, scoreTimer = null, quizActive = false, quizRun = 0;
 
 const screens = $$(".quiz-screen");
 const show = name => screens.forEach(s => s.classList.toggle("active", s.dataset.screen === name));
@@ -300,6 +301,12 @@ const best = store.get("quizBest", null);
 if (best !== null) $("#playedCounter").textContent = `Твой рекорд: ${best} из 8. Побьёшь?`;
 
 function startQuiz() {
+  clearTimeout(answerTimeout);
+  clearInterval(timerId);
+  clearInterval(scoreTimer);
+  quizRun++;
+  quizActive = true;
+  const run = quizRun;
   goal("quiz_start");
   order = QUESTIONS.map(q => {
     const opts = shuffle(q.a.map((t, i) => ({ t, ok: i === q.c })));
@@ -312,6 +319,7 @@ function startQuiz() {
   renderQuestion();
   clearInterval(timerId);
   timerId = setInterval(() => {
+    if (!quizActive || run !== quizRun) return;
     timeLeft--;
     $("#qTimer").textContent = timeLeft;
     if (timeLeft <= 10) $("#qTimer").classList.add("danger");
@@ -320,7 +328,9 @@ function startQuiz() {
 }
 
 function renderQuestion() {
+  if (!quizActive) return;
   locked = false;
+  const run = quizRun;
   const item = order[qi];
   $("#qNum").textContent = `${qi + 1} / ${order.length}`;
   $("#qProgress").style.width = (qi / order.length) * 100 + "%";
@@ -330,14 +340,15 @@ function renderQuestion() {
   item.opts.forEach(o => {
     const b = document.createElement("button");
     b.textContent = o.t;
-    b.addEventListener("click", () => answer(b, o.ok));
+    b.addEventListener("click", () => { if (run === quizRun) answer(b, o.ok); });
     box.appendChild(b);
   });
 }
 
 function answer(btn, ok) {
-  if (locked) return;
+  if (locked || !quizActive) return;
   locked = true;
+  const run = quizRun;
   if (ok) { score++; btn.classList.add("correct"); }
   else {
     btn.classList.add("wrong");
@@ -345,10 +356,18 @@ function answer(btn, ok) {
     $("#qOptions").children[idx].classList.add("correct");
   }
   if (navigator.vibrate) navigator.vibrate(ok ? 20 : [40, 40, 40]);
-  setTimeout(() => { qi++; qi < order.length ? renderQuestion() : finish(); }, ok ? 450 : 900);
+  answerTimeout = setTimeout(() => {
+    if (!quizActive || run !== quizRun) return;
+    qi++;
+    qi < order.length ? renderQuestion() : finish();
+  }, ok ? 450 : 900);
 }
 
 function finish() {
+  if (!quizActive) return;
+  quizActive = false;
+  locked = true;
+  clearTimeout(answerTimeout);
   goal("quiz_finish", { score });
   clearInterval(timerId);
   $("#qProgress").style.width = "100%";
@@ -370,7 +389,8 @@ function finish() {
 
 function animateScore(n) {
   let i = 0; const el = $("#rScore"); el.textContent = 0;
-  const t = setInterval(() => { if (i >= n) return clearInterval(t); el.textContent = ++i; }, 110);
+  clearInterval(scoreTimer);
+  scoreTimer = setInterval(() => { if (i >= n) return clearInterval(scoreTimer); el.textContent = ++i; }, 110);
 }
 
 $("#quizStart").addEventListener("click", startQuiz);
