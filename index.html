@@ -28,7 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Manrope:wght@400;500;700;800&display=swap" rel="stylesheet" />
   <script>document.documentElement.classList.add("js")</script>
-  <link rel="stylesheet" href="css/style.css?v=20261002-10" />
+  <link rel="stylesheet" href="css/style.css?v=20261102-2" />
 </head>
 <body>
 
@@ -353,10 +353,10 @@
           <p class="muted">Заполните короткую форму — я свяжусь с вами.</p>
 
           <label for="leadName">Имя</label>
-          <input id="leadName" name="Имя" type="text" autocomplete="name" placeholder="Как к вам обращаться" required />
+          <input id="leadName" class="ym-disable-keys" name="Имя" type="text" autocomplete="name" placeholder="Как к вам обращаться" required />
 
           <label for="leadContact">Телефон или Telegram</label>
-          <input id="leadContact" name="Контакт" type="text" autocomplete="tel" placeholder="+7 (900) 000-00-00 или @ник" required />
+          <input id="leadContact" class="ym-disable-keys" name="Контакт" type="text" autocomplete="tel" placeholder="+7 (900) 000-00-00 или @ник" required />
 
           <label for="leadFormat">Что интересует</label>
           <select id="leadFormat" name="Формат">
@@ -368,10 +368,15 @@
           </select>
 
           <label for="leadMessage">Сообщение</label>
-          <textarea id="leadMessage" name="Сообщение" rows="4" placeholder="Класс, цель (ОГЭ, ЕГЭ, оценки), удобное время"></textarea>
+          <textarea id="leadMessage" class="ym-disable-keys" name="Сообщение" rows="4" placeholder="Класс, цель (ОГЭ, ЕГЭ, оценки), удобное время"></textarea>
 
           <input type="text" name="_honey" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
+          <p class="tiny muted">Укажите свои контакты. Если записываете ребёнка, оставьте контакт родителя или законного представителя. Не указывайте паспортные данные и сведения о здоровье.</p>
+          <label class="consent-check" for="leadConsent">
+            <input id="leadConsent" name="personal_data_consent" type="checkbox" required />
+            <span>Даю <a href="consent.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a> для ответа на заявку. <a href="privacy.html" target="_blank" rel="noopener">Политика конфиденциальности</a>.</span>
+          </label>
           <button type="submit" class="btn btn-primary btn-lg w-full" id="leadSubmit">Отправить заявку</button>
           <p class="form-hint" id="leadError" role="alert" hidden></p>
           <div class="lead-fallback" id="leadFallback" hidden>
@@ -380,7 +385,7 @@
             <a class="btn fb-btn fb-max" id="fbMax" target="_blank" rel="noopener">Max</a>
             <a class="btn fb-btn fb-ph" id="fbPhone">Позвонить</a>
           </div>
-          <p class="tiny muted">Нажимая кнопку, вы соглашаетесь на обработку персональных данных для связи с вами.</p>
+
         </form>
 
         <div class="lead-success" id="leadSuccess" hidden>
@@ -396,6 +401,12 @@
   <footer class="footer">
     <span>© <span id="year"></span> Юлия · репетитор по математике</span>
     <span><a href="#" class="js-reviews">Отзывы</a> · <a href="#contacts" class="js-cta" data-start="footer">Записаться</a></span>
+    <nav class="footer-legal" aria-label="Правовая информация">
+      <a href="privacy.html">Политика конфиденциальности</a>
+      <a href="consent.html">Согласие на обработку данных</a>
+      <a href="cookies.html">Cookie и аналитика</a>
+      <button type="button" class="privacy-settings" data-cookie-settings>Настройки cookie</button>
+    </nav>
   </footer>
 
   <a href="#contacts" class="sticky-cta js-cta" data-start="sticky">Бесплатное пробное занятие →</a>
@@ -403,6 +414,18 @@
   <div class="toast" id="toast"></div>
   <canvas id="confetti" aria-hidden="true"></canvas>
 
-  <script src="js/main.js?v=20261031-1"></script>
+  <section class="cookie-notice" id="cookieNotice" aria-labelledby="cookieTitle" hidden>
+    <div>
+      <h2 id="cookieTitle">Аналитика — по вашему выбору</h2>
+      <p>С вашего разрешения подключим Яндекс.Метрику, чтобы улучшать сайт. Без аналитики запись на занятия и тест работают. <a href="cookies.html">Подробнее о cookie и данных</a>.</p>
+      <p class="cookie-status" id="cookieStatus" role="status"></p>
+    </div>
+    <div class="cookie-actions">
+      <button type="button" class="btn btn-ghost" id="analyticsReject">Без аналитики</button>
+      <button type="button" class="btn btn-ghost" id="analyticsAccept">Разрешить аналитику</button>
+    </div>
+  </section>
+  <script src="js/privacy.js?v=20261102-2"></script>
+  <script src="js/main.js?v=20261102-2"></script>
 </body>
 </html>

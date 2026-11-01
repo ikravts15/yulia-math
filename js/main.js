@@ -14,21 +14,11 @@ const CONFIG = {
   metrika: 113329618,                                        // ← номер счётчика Яндекс.Метрики (0 = выключено)
 };
 
-/* ---------- Яндекс.Метрика ---------- */
-(function (id) {
-  if (!id) return;
-  (function (m, e, t, r, i, k, a) {
-    m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
-    m[i].l = 1 * new Date();
-    k = e.createElement(t); a = e.getElementsByTagName(t)[0];
-    k.async = 1; k.src = r; a.parentNode.insertBefore(k, a);
-  })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-  ym(id, "init", { clickmap: true, trackLinks: true, accurateTrackBounce: true, webvisor: true });
-})(CONFIG.metrika);
+/* ---------- аналитика запускается только после отдельного согласия ---------- */
+window.sitePrivacy?.configure(CONFIG.metrika);
 
-// Цели: cta_click, form_start, lead, contact_click, reviews_click, quiz_start, quiz_finish, share_result, challenge, ref_share, ref_copy
 function goal(name, params) {
-  try { if (CONFIG.metrika && window.ym) ym(CONFIG.metrika, "reachGoal", name, params); } catch (e) {}
+  try { window.sitePrivacy?.goal(name, params); } catch (e) {}
 }
 
 /* Отзывы для «стены» — настоящие сообщения из Telegram */
@@ -145,10 +135,16 @@ $("#year").textContent = new Date().getFullYear();
 
   form.addEventListener("submit", async e => {
     e.preventDefault();
+    if (btn.disabled) return;
     err.hidden = true; $("#leadFallback").hidden = true;
     const name = $("#leadName").value.trim(), contact = $("#leadContact").value.trim();
     if (!name) { showError("Пожалуйста, укажите имя."); $("#leadName").focus(); return; }
     if (contact.replace(/\W/g, "").length < 5) { showError("Укажите телефон или ник в Telegram, чтобы я могла связаться."); $("#leadContact").focus(); return; }
+    if (!$("#leadConsent").checked) {
+      showError("Для отправки заявки нужно дать согласие на обработку персональных данных.");
+      $("#leadConsent").focus();
+      return;
+    }
     if (form._honey.value) return; // бот-спамер
 
     const data = {
@@ -158,6 +154,10 @@ $("#year").textContent = new Date().getFullYear();
       "Сообщение": $("#leadMessage").value.trim() || "—",
       "Результат теста": lastQuizScore !== null ? lastQuizScore + " из 8" : "не проходил(а)",
       "Источник": leadSource,
+      "Согласие на обработку данных": "Дано отдельной отметкой в форме для ответа на заявку",
+      "Версия согласия": "2026-11-02",
+      "Текст согласия": new URL("consent.html", location.href).href,
+      "Время согласия (UTC)": new Date().toISOString(),
       _subject: "Новая заявка с сайта yulia-math.ru — " + name,
       _template: "table",
       _captcha: "false",
