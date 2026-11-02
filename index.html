@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- Быстрый LCP: предзагрузка hero-изображения -->
+  <link rel="preload" as="image" href="images/portrait.webp" type="image/webp" fetchpriority="high" />
+
   <title>Юлия Ширяева — репетитор по математике | ОГЭ и ЕГЭ без страха</title>
   <meta name="description" content="Подготовка к ОГЭ и ЕГЭ по математике для 5–11 классов. Индивидуально и в мини-группах в Zoom. Занятия от 1 200 ₽, первое — бесплатно. Пройди тест за 60 секунд!" />
   <meta name="theme-color" content="#2f4a3a" />
@@ -67,7 +71,7 @@
 
     <div class="hero-visual reveal">
       <div class="photo-card tilt">
-        <img src="images/portrait.jpg" alt="Юлия, репетитор по математике" fetchpriority="high" />
+        <picture><source srcset="images/portrait.webp" type="image/webp" /><img src="images/portrait.jpg" alt="Юлия, репетитор по математике" fetchpriority="high" /></picture>
       </div>
       <div class="sticker s1">🥋 чёрный пояс<br>по каратэ</div>
       <div class="sticker s2">🥇 золотая<br>медаль</div>
@@ -146,7 +150,7 @@
   <section class="section about" id="about">
     <div class="about-photo reveal">
       <div class="photo-card">
-        <img src="images/standing.jpg" alt="Юлия с учебником" loading="lazy" />
+        <picture><source srcset="images/standing.webp" type="image/webp" /><img src="images/standing.jpg" alt="Юлия с учебником" loading="lazy" /></picture>
       </div>
       <figure class="tg tg-float about-tg">
         <figcaption>Переслано от: Викуша</figcaption>
@@ -175,15 +179,15 @@
       <h2>Спокойно, понятно<br>и без «зубрёжки»</h2>
     </div>
     <div class="gallery">
-      <figure class="g g1 reveal"><img src="images/desk-smile.jpg" alt="Юлия улыбается за столом с учебником алгебры" loading="lazy" /></figure>
-      <figure class="g g2 reveal"><img src="images/book-closeup.jpg" alt="Разбор задач по учебнику" loading="lazy" /></figure>
-      <figure class="g g3 reveal"><img src="images/laptop-sofa.jpg" alt="Занятие в Zoom" loading="lazy" /><span class="g-tag">💻 Zoom</span></figure>
-      <figure class="g g4 reveal"><img src="images/reading-chair.jpg" alt="Юлия готовится к уроку" loading="lazy" /></figure>
+      <figure class="g g1 reveal"><picture><source srcset="images/desk-smile.webp" type="image/webp" /><img src="images/desk-smile.jpg" alt="Юлия улыбается за столом с учебником алгебры" loading="lazy" /></picture></figure>
+      <figure class="g g2 reveal"><picture><source srcset="images/book-closeup.webp" type="image/webp" /><img src="images/book-closeup.jpg" alt="Разбор задач по учебнику" loading="lazy" /></picture></figure>
+      <figure class="g g3 reveal"><picture><source srcset="images/laptop-sofa.webp" type="image/webp" /><img src="images/laptop-sofa.jpg" alt="Занятие в Zoom" loading="lazy" /></picture><span class="g-tag">💻 Zoom</span></figure>
+      <figure class="g g4 reveal"><picture><source srcset="images/reading-chair.webp" type="image/webp" /><img src="images/reading-chair.jpg" alt="Юлия готовится к уроку" loading="lazy" /></picture></figure>
       <figure class="tg g-tg reveal">
         <figcaption>Переслано от: wkeiwii</figcaption>
         <p>С вами мне было легко разобраться в любых темах, также в плане человека вы очень понимающая и добрая)</p>
       </figure>
-      <figure class="g g5 reveal"><img src="images/desk-reading.jpg" alt="Юлия читает учебник" loading="lazy" /></figure>
+      <figure class="g g5 reveal"><picture><source srcset="images/desk-reading.webp" type="image/webp" /><img src="images/desk-reading.jpg" alt="Юлия читает учебник" loading="lazy" /></picture></figure>
     </div>
   </section>
 
